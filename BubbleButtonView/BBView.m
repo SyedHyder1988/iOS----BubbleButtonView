@@ -43,7 +43,23 @@
             
             // Find the size of the button, turn it into a rect
             NSString *bub = [strings objectAtIndex:xx];
-            CGSize bSize = [bub sizeWithFont:[UIFont systemFontOfSize:fsize] constrainedToSize:CGSizeMake(MAXFLOAT, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
+           // CGSize bSize = [bub sizeWithFont:[UIFont systemFontOfSize:fsize] constrainedToSize:CGSizeMake(MAXFLOAT, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
+            CGSize bSize;
+            if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1) {
+                // here you go with iOS 7
+                NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+                [style setLineBreakMode:NSLineBreakByWordWrapping];
+                
+                NSDictionary *attributes = @{NSFontAttributeName:[UIFont systemFontOfSize:14.0f], NSParagraphStyleAttributeName: style};
+                
+                CGRect textRect = [bub boundingRectWithSize:CGSizeMake(MAXFLOAT, MAXFLOAT)
+                                                    options:NSStringDrawingUsesLineFragmentOrigin
+                                                 attributes:attributes
+                                                    context:nil];
+                bSize = textRect.size;
+            } else {
+                bSize = [bub sizeWithFont:[UIFont systemFontOfSize:fsize] constrainedToSize:CGSizeMake(MAXFLOAT, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
+            }
             CGRect buttonRect = CGRectMake(pad, pad, bSize.width + fsize, bSize.height + fsize/2);
             
             
